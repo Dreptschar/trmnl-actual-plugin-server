@@ -3,8 +3,6 @@ const fetchData = require('./actual');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-
 app.post('/api/markup',async (req, res)  => {
     console.log(req)
     const body = req.data;
