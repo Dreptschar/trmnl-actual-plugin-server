@@ -32,9 +32,6 @@ const formatted = `${year}-${month}`;
   let categories = budget.categoryGroups[1].categories
   await api.shutdown();
 
-  console.log(budget);
-  console.log(categories)
-  
   let mappedData = categories.map((c)=> ({ 
     name: c.name,
     budgeted: api.utils.integerToAmount(c.budgeted),
