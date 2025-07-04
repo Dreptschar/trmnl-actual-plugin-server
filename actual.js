@@ -1,17 +1,7 @@
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const body = req.body;
-    console.log(body)
-    const data = await fetchData(body.serverURL, body.serverPassword, body.budgetSyncId, body.budgetEncryptionPassword);
-    res.status(200).json(JSON.stringify(data));
-  } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
-  }
-}
+  let api = require('@actual-app/api');
+  const fs = require('fs');
 
-async function fetchData(serverurl, serverpassword, budgetSyncId, budgetEncPw) {
-  let api = await require('@actual-app/api');
-  const fs = await require('fs');
+const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw) =>{
   const folderPath = '/tmp/cache';
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
@@ -19,8 +9,8 @@ async function fetchData(serverurl, serverpassword, budgetSyncId, budgetEncPw) {
   }
   await api.init({
     // Budget data will be cached locally here, in subdirectories for each file.
-    dataDir: folderPath,
     // This is the URL of your running server
+    dataDir: folderPath,
     serverURL: serverurl,
     // This is the password you use to log into the server
     password: serverpassword,
@@ -47,3 +37,5 @@ const formatted = `${year}-${month}`;
 
   return categories;
 }
+
+module.exports = fetchData
