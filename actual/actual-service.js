@@ -1,10 +1,16 @@
 let api = require('@actual-app/api');
 
-export async function fetchData(serverurl, serverpassword, budgetSyncId, budgetEncPw) {
 
+export async function fetchData(serverurl, serverpassword, budgetSyncId, budgetEncPw) {
+  const fs = require('fs');
+  const folderPath = './data/cache';
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+    console.log('Folder created:', folderPath);
+  }
   await api.init({
     // Budget data will be cached locally here, in subdirectories for each file.
-    dataDir: './data/cache',
+    dataDir: folderPath,
     // This is the URL of your running server
     serverURL: serverurl,
     // This is the password you use to log into the server
