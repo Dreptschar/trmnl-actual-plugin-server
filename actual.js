@@ -34,8 +34,17 @@ const formatted = `${year}-${month}`;
 
   console.log(budget);
   console.log(categories)
+  
+  let mappedData = categories.map((c)=> ({ 
+    name: c.name,
+    budgeted: api.utils.integerToAmount(c.budgeted),
+    spent: api.utils.integerToAmount(c.spent),
+    balance: api.utils.integerToAmount(c.balance)
 
-  return categories;
+  }))
+  console.log(mappedData)
+
+  return mappedData;
 }
 
 module.exports = fetchData
