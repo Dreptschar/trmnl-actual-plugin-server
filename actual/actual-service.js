@@ -3,7 +3,7 @@ let api = require('@actual-app/api');
 
 export async function fetchData(serverurl, serverpassword, budgetSyncId, budgetEncPw) {
   const fs = require('fs');
-  const folderPath = './data/cache';
+  const folderPath = '/tmp/cache';
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
     console.log('Folder created:', folderPath);
