@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Dreptschar/trmnl-actual-plugin-server#readme",
   "dependencies": {
+    "@actual-app/api": "^25.7.1",
     "express": "^5.1.0"
   }
 }

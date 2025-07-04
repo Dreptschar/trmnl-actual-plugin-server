@@ -1,6 +1,9 @@
-export default function handler(req, res) {
+import { fetchData } from "../actual/actual-service";
+
+export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const data = {"text":"Random text 85 from web server","author":"TRMNL","collection":[{"title":"Book title","description":"Some description"},{"title":"Another book","description":"Another description"}]}
+    const body = req.body;
+    const data = await fetchData(body.serverURL, body.serverPassword, body.budgetSyncId, body.budgetEncryptionPassword);
     res.status(200).json(JSON.stringify(data));
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });
