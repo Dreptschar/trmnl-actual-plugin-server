@@ -5,7 +5,6 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw,gr
   const folderPath = '/tmp/cache';
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
-    console.log('Folder created:', folderPath);
   }
   await api.init({
     // Budget data will be cached locally here, in subdirectories for each file.
@@ -31,7 +30,6 @@ const month = String(now.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-ba
   const formatted = `${year}-${month}`;
   let budget = await api.getBudgetMonth(formatted);
   let categories = budget.categoryGroups.filter(g => g.name === groupName)[0].categories
-  console.log(categories)
   await api.shutdown();
   mappedCategories = categories.filter((x) => !x.hidden).map((c)=> ({ 
     name: c.name,
