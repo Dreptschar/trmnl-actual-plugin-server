@@ -7,7 +7,7 @@ app.use(express.urlencoded({ extended: true }));
 app.post('/api/markup',async (req, res)  => {
     const body = req.body;
     console.log(body)
-    const data = await fetchData(body.serverURL, body.serverPassword, body.budgetSyncId, body.budgetEncryptionPassword);
+    const data = await fetchData(body.serverURL, body.serverPassword, body.budgetSyncId, body.budgetEncryptionPassword, body.groupName);
     res.status(200).json(data);
 });
 

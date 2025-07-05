@@ -1,7 +1,7 @@
   let api = require('@actual-app/api');
   const fs = require('fs');
 
-const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw) =>{
+const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw,groupName) =>{
   const folderPath = '/tmp/cache';
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
@@ -15,6 +15,8 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw) =
     // This is the password you use to log into the server
     password: serverpassword,
   });
+  let mappedCategories = {}
+  try{
   if(budgetEncPw == null){
   await api.downloadBudget(budgetSyncId);
   }else{
@@ -26,22 +28,23 @@ const now = new Date();
 const year = now.getFullYear();
 const month = String(now.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-based
 
-const formatted = `${year}-${month}`;
-
+  const formatted = `${year}-${month}`;
   let budget = await api.getBudgetMonth(formatted);
-  let categories = budget.categoryGroups[1].categories
+  let categories = budget.categoryGroups.filter(g => g.name === groupName)[0].categories
+  console.log(categories)
   await api.shutdown();
-
-  let mappedData = categories.map((c)=> ({ 
+  mappedCategories = categories.filter((x) => !x.hidden).map((c)=> ({ 
     name: c.name,
     budgeted: api.utils.integerToAmount(c.budgeted),
     spent: api.utils.integerToAmount(c.spent),
     balance: api.utils.integerToAmount(c.balance)
 
   }))
-  console.log(mappedData)
+  }catch {
+    api.shutdown();
+  }
 
-  return mappedData;
+  return mappedCategories;
 }
 
-module.exports = fetchData
+module.exports = fetchData 
