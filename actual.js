@@ -1,7 +1,7 @@
   let api = require('@actual-app/api');
   const fs = require('fs');
 
-const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw,groupName,excluded) =>{
+const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw,groupName,included) =>{
   const folderPath = '/tmp/cache';
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
@@ -38,10 +38,10 @@ const month = String(now.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-ba
     balance: api.utils.integerToAmount(c.balance)
 
   }))
-  if(excluded != null){
-    const input = excluded;
-    const excludedCategories = input.split(",").map(i => i.trim());
-    mappedCategories = mappedCategories.filter(c => !excludedCategories.includes(c.name.trim()))
+  if(included != null){
+    const input = included;
+    const includedCategories = input.split(",").map(i => i.trim());
+    mappedCategories = mappedCategories.filter(c => includedCategories.includes(c.name.trim()))
   }
   }catch {
     api.shutdown();
