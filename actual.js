@@ -36,7 +36,7 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         let budget = await api.getBudgetMonth(formatted);
         let categories = budget.categoryGroups.filter(g => g.name === groupName)[0].categories
         await api.shutdown();
-        cleanCache(folderPath)
+        await cleanCache(folderPath)
         mappedCategories = categories.filter((x) => !x.hidden).map((c) => ({
             name: c.name,
             budgeted: api.utils.integerToAmount(c.budgeted),
