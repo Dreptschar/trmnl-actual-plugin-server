@@ -56,7 +56,7 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
             const includedCategories = input.split(",").map(i => i.trim());
             mappedCategories = mappedCategories.filter(c => includedCategories.includes(c.name.trim()))
         }
-        return mappedCategories;
+        return { data: mappedCategories };
     } catch (error) {
         console.log("WE CATCHED IT")
         console.log(error)
