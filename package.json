@@ -25,5 +25,8 @@
   "dependencies": {
     "@actual-app/api": "^25.10.0",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
   }
 }
