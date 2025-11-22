@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require("path");
 
 const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, groupName, included) => {
-    console.log('FETCHING DATA')
+    console.error('FETCHING DATA')
     const folderPath = './tmp/cache';
     let apiInitialised = false;
     try {
@@ -19,7 +19,10 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         if (typeof groupName !== 'string' || groupName.trim() === '') {
             throw new Error('groupName must be a non-empty string');
         }
-        if (!fs.existsSync(folderPath)) {
+        if (fs.existsSync(folderPath)) {
+            await cleanCache(folderPath)
+            fs.mkdirSync(folderPath, { recursive: true });
+        } else {
             fs.mkdirSync(folderPath, { recursive: true });
         }
         await api.init({
@@ -58,28 +61,29 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         }
         return { data: mappedCategories };
     } catch (error) {
-        console.log("WE CATCHED IT")
-        console.log(error)
+        console.error("WE CATCHED IT")
+        console.error(error)
         return { error: "There was a exception with loading the budget: " + JSON.stringify(serializeErr(error)) }
     } finally {
         try {
             if (apiInitialised) {
-                console.log('shuting down')
+                console.error('shuting down')
                 await api.shutdown();
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
         try {
-            console.log('clearing cache')
+            console.error('clearing cache')
             await cleanCache(folderPath)
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 }
 
 async function cleanCache(dirPath) {
+    console.error("Cleaning Cache")
     const entries = await fs.promises.readdir(dirPath)
     for (const entry of entries) {
         const fullPath = path.join(dirPath, entry);
