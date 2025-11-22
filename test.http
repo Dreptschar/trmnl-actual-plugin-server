@@ -1,0 +1,14 @@
+### 
+
+POST http://localhost:8080/api/markup HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "budgetEncryptionPassword": "WNCsGQZ7V.3*Gb@EeXg4",
+  "budgetSyncId": "d0423922-2037-4479-ba30-35e0289fe2c8",
+  "groupName": "Flexi",
+  "included": "🛒 Lebensmittel,🍽️ Restaurants,💩 Budget,🎢 Aktivitäten",
+  "serverPassword": "3HQ*AiiD-qrkVJF",
+  "serverURL": "https://actual.dreptschar.com"
+}
