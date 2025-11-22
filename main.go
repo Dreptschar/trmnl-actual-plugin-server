@@ -69,7 +69,8 @@ func main() {
 			break
 		}
 
-		json.NewEncoder(w).Encode(last)
+		w.Header().Set("Content-Type", "application/json")
+		_,_ = w.Write([]byte(last))
 	})
 	server := &http.Server{
 		Addr:    ":8080",
