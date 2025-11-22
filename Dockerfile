@@ -11,7 +11,7 @@ RUN npm install
 COPY . .
 
 # ---------- Stage 2: Go build ----------
-FROM golang:1.23 AS go-builder
+FROM golang:1.25 AS go-builder
 
 WORKDIR /usr/src/app
 
