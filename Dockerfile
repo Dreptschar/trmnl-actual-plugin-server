@@ -16,7 +16,7 @@ FROM golang:1.23 AS go-builder
 WORKDIR /usr/src/app
 
 # Go modules
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 # Copy everything (including main.go)
