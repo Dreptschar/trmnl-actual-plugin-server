@@ -22,26 +22,27 @@ type Payload struct {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/markup", func(w http.ResponseWriter, r *http.Request) {
-		// payload := `{"serverURL":"https://actual.dreptschar.com","serverPassword":"3HQ*AiiD-qrkVJF","budgetSyncId":"d0423922-2037-4479-ba30-35e0289fe2c8","budgetEncryptionPassword":"WNCsGQZ7V.3*Gb@EeXg4","groupName":"Flexi","included":"🛒 Lebensmittel,🍽️ Restaurants,💩 Budget,🎢 Aktivitäten"}`
-
+		log.Println("Received POST /api/markup request")
 		var payload Payload
 		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-			http.Error(w, "failed to encode json: "+err.Error(), http.StatusInternalServerError)
+			log.Printf("Failed to decode JSON: %v\n", err)
+			http.Error(w, "failed to decode json: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
 		defer cancel()
 
 		jsonBytes, err := json.Marshal(payload)
 		if err != nil {
+			log.Printf("Failed to marshal payload: %v\n", err)
 			http.Error(w, "failed to marshal: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		cmd := exec.CommandContext(ctx, "node", "script.js", string(jsonBytes))
 
+		cmd := exec.CommandContext(ctx, "node", "script.js", string(jsonBytes))
 		out, err := cmd.Output()
 		if ctx.Err() == context.DeadlineExceeded {
+			log.Println("Node script execution timed out")
 			http.Error(w, "Node script timed out", http.StatusInternalServerError)
 			return
 		}
@@ -53,10 +54,10 @@ func main() {
 				msg.WriteString("\nOutput: ")
 				msg.Write(out)
 			}
+			log.Printf("Command failed. Error: %v, Output: %s\n", err, string(out))
 			http.Error(w, msg.String(), http.StatusInternalServerError)
 			return
 		}
-
 		result := strings.TrimSpace(string(out))
 		lines := strings.Split(result, "\n")
 		var last string
@@ -69,8 +70,9 @@ func main() {
 			break
 		}
 
+		log.Printf("Sending response: %s\n", last)
 		w.Header().Set("Content-Type", "application/json")
-		_,_ = w.Write([]byte(last))
+		_, _ = w.Write([]byte(last))
 	})
 	server := &http.Server{
 		Addr:    ":8080",
