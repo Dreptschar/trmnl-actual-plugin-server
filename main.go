@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os/exec"
@@ -72,7 +73,13 @@ func main() {
 
 		log.Printf("Sending response: %s\n", last)
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(last))
+		containsError := strings.Contains(last, "error")
+		if containsError {
+			jsonStirng := fmt.Sprintf(`{"error":"%s"}`, last)
+			_, _ = w.Write([]byte(jsonStirng))
+		} else {
+			_, _ = w.Write([]byte(last))
+		}
 	})
 	server := &http.Server{
 		Addr:    ":8080",
