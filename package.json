@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "go run main.go"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,7 @@
   },
   "homepage": "https://github.com/Dreptschar/trmnl-actual-plugin-server#readme",
   "dependencies": {
-    "@actual-app/api": "^26.3.0",
-    "express": "^5.2.1"
+    "@actual-app/api": "^26.3.0"
   },
   "devDependencies": {
     "prettier": "^3.6.2"

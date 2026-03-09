@@ -4,7 +4,8 @@ const path = require("path");
 
 const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, groupName, included) => {
     console.error('FETCHING DATA')
-    const folderPath = './tmp/cache';
+    const cacheRootPath = path.resolve('./tmp/cache');
+    let folderPath = '';
     let apiInitialised = false;
     try {
         if (typeof budgetSyncId !== 'string' || budgetSyncId.trim() === '') {
@@ -13,18 +14,12 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         if (budgetEncPw != null && typeof budgetEncPw !== 'string') {
             throw new Error('budgetEncPw must be a string when provided');
         }
-        if (typeof folderPath !== 'string' || folderPath.trim() === '') {
-            throw new Error('folderPath must be a non-empty string');
-        }
         if (typeof groupName !== 'string' || groupName.trim() === '') {
             throw new Error('groupName must be a non-empty string');
         }
-        if (fs.existsSync(folderPath)) {
-            await cleanCache(folderPath)
-            fs.mkdirSync(folderPath, { recursive: true });
-        } else {
-            fs.mkdirSync(folderPath, { recursive: true });
-        }
+        await fs.promises.mkdir(cacheRootPath, { recursive: true });
+        folderPath = await fs.promises.mkdtemp(path.join(cacheRootPath, 'run-'));
+
         await api.init({
             // Budget data will be cached locally here, in subdirectories for each file.
             // This is the URL of your running server
@@ -75,20 +70,17 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         }
         try {
             console.error('clearing cache')
-            await cleanCache(folderPath)
+            await removeDir(folderPath)
         } catch (error) {
             console.error(error)
         }
     }
 }
 
-async function cleanCache(dirPath) {
-    console.error("Cleaning Cache")
-    const entries = await fs.promises.readdir(dirPath)
-    for (const entry of entries) {
-        const fullPath = path.join(dirPath, entry);
-        await fs.promises.rm(fullPath, { recursive: true, force: true })
-    }
+async function removeDir(dirPath) {
+    if (!dirPath) return;
+    console.error("Removing cache dir")
+    await fs.promises.rm(dirPath, { recursive: true, force: true })
 }
 
 function serializeErr(e) {

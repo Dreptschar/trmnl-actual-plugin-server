@@ -1,4 +1,8 @@
-/node_modules/*
-/data/cache/*
+node_modules/
+tmp/cache/
+data/cache/
+.cache/
+trmnl-actual-plugin-server
+.vscode/
 api.http
-/node_modules/*
+testing/
