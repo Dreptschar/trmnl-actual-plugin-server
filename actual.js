@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require("path");
 
 const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, groupName, included) => {
-    console.error('FETCHING DATA')
     const cacheRootPath = path.resolve('./tmp/cache');
     let folderPath = '';
     let apiInitialised = false;
@@ -26,8 +25,7 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
             dataDir: folderPath,
             serverURL: serverurl,
             // This is the password you use to log into the server
-            password: serverpassword,
-            verbose: true
+            password: serverpassword
         });
         apiInitialised = true;
         let mappedCategories = {}
@@ -56,20 +54,17 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         }
         return { data: mappedCategories };
     } catch (error) {
-        console.error("WE CATCHED IT")
         console.error(error)
         return { error: "There was a exception with loading the budget: " + JSON.stringify(serializeErr(error)) }
     } finally {
         try {
             if (apiInitialised) {
-                console.error('shuting down')
                 await api.shutdown();
             }
         } catch (error) {
             console.error(error)
         }
         try {
-            console.error('clearing cache')
             await removeDir(folderPath)
         } catch (error) {
             console.error(error)
@@ -79,7 +74,6 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
 
 async function removeDir(dirPath) {
     if (!dirPath) return;
-    console.error("Removing cache dir")
     await fs.promises.rm(dirPath, { recursive: true, force: true })
 }
 
