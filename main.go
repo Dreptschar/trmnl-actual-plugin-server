@@ -100,7 +100,7 @@ func main() {
 			return
 		}
 
-		log.Printf("Sending response: %s\n", last)
+		log.Printf("Sending response")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(last))
