@@ -52,7 +52,7 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
             const includedCategories = input.split(",").map(i => i.trim());
             mappedCategories = mappedCategories.filter(c => includedCategories.includes(c.name.trim()))
         }
-        return { data: mappedCategories };
+        return mappedCategories;
     } catch (error) {
         console.error(error)
         return { error: "There was a exception with loading the budget: " + JSON.stringify(serializeErr(error)) }

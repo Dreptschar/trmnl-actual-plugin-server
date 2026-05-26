@@ -62,8 +62,21 @@ The API validates:
 
 Important: the endpoint always responds with HTTP `200`.
 
-- Success: JSON payload with data
+- Success: JSON array of matching category balances
 - Failure: JSON object with an `error` field
+
+Example success response:
+
+```json
+[
+  {
+    "name": "Groceries",
+    "budgeted": 275.61,
+    "spent": -213.62,
+    "balance": 81.89
+  }
+]
+```
 
 Example error response:
 
