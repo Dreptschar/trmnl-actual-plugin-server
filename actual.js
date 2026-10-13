@@ -2,6 +2,12 @@ let api = require('@actual-app/api');
 const fs = require('fs');
 const path = require("path");
 
+// Tracks the temp dir of whichever job is currently running, so a crash that
+// escapes this function's own try/finally (see getCurrentTempDir below) can
+// still be cleaned up by the caller instead of leaking real budget data onto
+// disk indefinitely.
+let currentTempDir = null;
+
 const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, groupName, included) => {
     const cacheRootPath = path.resolve('./tmp/cache');
     let folderPath = '';
@@ -18,6 +24,7 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         }
         await fs.promises.mkdir(cacheRootPath, { recursive: true });
         folderPath = await fs.promises.mkdtemp(path.join(cacheRootPath, 'run-'));
+        currentTempDir = folderPath;
 
         await api.init({
             // Budget data will be cached locally here, in subdirectories for each file.
@@ -69,12 +76,24 @@ const fetchData = async (serverurl, serverpassword, budgetSyncId, budgetEncPw, g
         } catch (error) {
             console.error(error)
         }
+        if (currentTempDir === folderPath) {
+            currentTempDir = null;
+        }
     }
 }
 
 async function removeDir(dirPath) {
     if (!dirPath) return;
     await fs.promises.rm(dirPath, { recursive: true, force: true })
+}
+
+// Some errors the Actual SDK raises escape as a process-level unhandled
+// rejection instead of rejecting the promise fetchData() awaits, which skips
+// its try/catch/finally entirely - this function's own cleanup never runs.
+// worker.js calls this from its crash handler as a last-resort sweep so a
+// crash like that can't leave real budget data sitting on disk.
+function getCurrentTempDir() {
+    return currentTempDir;
 }
 
 function serializeErr(e) {
@@ -91,4 +110,6 @@ function serializeErr(e) {
     return { message: String(e) };
 }
 
-module.exports = fetchData 
+module.exports = fetchData
+module.exports.fetchData = fetchData
+module.exports.getCurrentTempDir = getCurrentTempDir

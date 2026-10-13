@@ -1,8 +1,17 @@
 version: '3.8'
-services: 
+services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-  
+    environment:
+      # Number of node fetch jobs allowed to run at once (default: NumCPU).
+      - MAX_CONCURRENT_JOBS=4
+      # Max seconds a request may spend queued + fetching before failing.
+      - REQUEST_TIMEOUT_SECONDS=45
+    tmpfs:
+      # Per-request Actual budget cache lives in RAM only: never written to
+      # disk, gone on container restart. Each request gets its own temp dir
+      # here which is deleted again once the response is sent (see actual.js).
+      - /usr/src/app/tmp/cache:size=256m,mode=1777

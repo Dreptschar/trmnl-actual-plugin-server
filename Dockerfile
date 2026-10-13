@@ -39,5 +39,5 @@ COPY --from=go-builder /usr/src/app/server /usr/local/bin/server
 # Go HTTP server listening port
 EXPOSE 8080
 
-# Start the Go server (which calls `node script.js` internally)
+# Start the Go server (which spawns and manages a pool of `node worker.js` processes internally)
 CMD ["server"]
